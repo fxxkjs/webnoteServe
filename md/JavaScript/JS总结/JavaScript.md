@@ -8,6 +8,8 @@
 		Boolean			[基本类型]
 		Undefined		[基本类型]
 		Null			[基本类型]
+		Symbol			[基本类型]
+		BigInt			[基本类型]
 		Object			[引用类型]
 		
 	js数据类型判断：

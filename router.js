@@ -4,7 +4,7 @@ const res = require('express/lib/response')
 const router = express.Router()
 const fs = require("fs")
 const mdPath = "./md"
-const tmpMdPath = "./tmpMd"
+const tmpMdPath = "./md_tmp"
 const reg = /^\d{6,12}$/
 const navReg = /^[a-z0-9A-Z\u4e00-\u9fa5._/-]{2,16}$/
 const multer = require('multer')
@@ -98,8 +98,9 @@ router.get('/cont/:topnav/:leftnav/:title', function (req, res) {
     // 记录访问者IP地址
     function getClientIp(req) {
         let data = `${new Date().toLocaleString()}  ${getIp(req)}  ${paths} \n`
-        fs.writeFile('./log/log.txt', data, { flag: "a" }, function (err) {
+        fs.writeFile(`./log/${req.signedCookies.webnote === undefined ? 'log' : req.signedCookies.webnote}.txt`, data, { flag: "a" }, function (err) {
             if (err) {
+                console.log(err);
                 return
             }
         })
@@ -121,7 +122,7 @@ router.post('/register', function (req, res) {
         return
     }
     // 为用户创建个人目录
-    fs.mkdir(`./tmpMd/${req.body.username}`, (err) => {
+    fs.mkdir(`${tmpMdPath}/${req.body.username}`, (err) => {
         if (err) {
             // 判断账号是否注册
             res.send({
@@ -151,6 +152,7 @@ router.post('/register', function (req, res) {
 
             fs.writeFile('./log/userip.txt', `注册时间： ${new Date().toLocaleString()}; username: ${req.body.username}; password: ${req.body.password}; ip: ${getIp(req)},\n`, { flag: "a" }, function (err) {
                 if (err) {
+                    console.log(err);
                     return
                 }
             })
